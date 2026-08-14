@@ -1,55 +1,46 @@
+package javaprogram;
 import java.util.*;
-public class Main {
-    static class Driver {
-        String name;
-        Driver(String name) {
-            this.name = name;
-        }
+abstract class Trip {
+    double distance;
+    Trip(double d) {
+        if (d <= 0) throw new IllegalArgumentException();
+        distance = d;
     }
-    static class Rider {
-        String name;
-        Rider(String name) {
-            this.name = name;
-        }
-    }
-    static class Vehicle {
-        String type;
-        Vehicle(String type) {
-            this.type = type;
-        }
-    }
-    static class Trip {
-        String type;
-        double distance;
-        Trip(String type, double distance) {
-            this.type = type;
-            this.distance = distance;
-        }
-        double fare() throws Exception {
-            if (distance <= 0)
-                throw new Exception("Invalid booking");
-            if (type.equals("Bike"))
-                return distance * 5;
-            if (type.equals("Auto"))
-                return distance * 12;
-            if (type.equals("Cab"))
-                return distance * 12;
-            throw new Exception("Invalid booking");
-        }
-    }
+    abstract double fare();
+}
+class Bike extends Trip {
+    Bike(double d) { super(d); }
+    double fare() { return distance * 5; }
+}
+class Cab extends Trip {
+    Cab(double d) { super(d); }
+    double fare() { return distance * 12; }
+}
+class Auto extends Trip {
+    Auto(double d) { super(d); }
+    double fare() { return distance * 12; }
+}
+public class RideSharingPlatformSimulator {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        for (int i = 0; i < n; i++) {
+        while (n-- > 0) {
             String type = sc.next();
-            double distance = sc.nextDouble();
+            double d = sc.nextDouble();
             try {
-                Trip t = new Trip(type, distance);
+                Trip t;
+                if (type.equalsIgnoreCase("Bike"))
+                    t = new Bike(d);
+                else if (type.equalsIgnoreCase("Cab"))
+                    t = new Cab(d);
+                else if (type.equalsIgnoreCase("Auto"))
+                    t = new Auto(d);
+                else
+                    throw new IllegalArgumentException();
                 System.out.println((int)t.fare());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Invalid Booking");
             }
         }
-        sc.close();
     }
 }
