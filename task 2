@@ -1,20 +1,23 @@
+package javaprogram;
 import java.util.*;
-public class Main {
+public class RealTimeStreamAnalyticsEngine {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         Map<String, List<Double>> map = new HashMap<>();
         for (int i = 0; i < n; i++) {
             String id = sc.next();
-            double t = sc.nextDouble();
-            if (t > 50)
-                map.computeIfAbsent(id, k -> new ArrayList<>()).add(t);
+            double temp = sc.nextDouble();
+            if (temp > 50)
+                map.computeIfAbsent(id, k -> new ArrayList<>()).add(temp);
         }
         map.entrySet().stream()
-           .sorted((a, b) -> Double.compare(avg(b.getValue()), avg(a.getValue())))
-           .forEach(e -> System.out.println(e.getKey() + " " + avg(e.getValue())));
-    }
-    static double avg(List<Double> list) {
-        return list.stream().mapToDouble(x -> x).average().getAsDouble();
+           .sorted((a, b) -> Double.compare(
+               b.getValue().stream().mapToDouble(x -> x).average().getAsDouble(),
+               a.getValue().stream().mapToDouble(x -> x).average().getAsDouble()))
+           .forEach(e -> System.out.println(
+               e.getKey() + " " +
+               e.getValue().stream().mapToDouble(x -> x).average().getAsDouble()));
+        sc.close();
     }
 }
