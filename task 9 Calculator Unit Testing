@@ -1,0 +1,27 @@
+package javaprogram;
+import java.util.*;
+public class CalculatorUnitTesting {
+	 public static void main(String[] args) {
+	        Scanner sc = new Scanner(System.in);
+	        String input = sc.nextLine();
+	        String[] parts = input.split(" ");
+	        int a = Integer.parseInt(parts[0]);
+	        String op = parts[1];
+	        int b = Integer.parseInt(parts[2]);
+	        if (op.equals("+")) {
+	            int result = a + b;
+	            if (result == 30)
+	                System.out.println("Test Passed");
+	            else
+	                System.out.println("Test Failed");
+	        } 
+	        else if (op.equals("/")) {
+	            if (b != 0) {
+	                int result = a / b;
+	                System.out.println("Test Passed");
+	            } else {
+	                System.out.println("Test Failed");
+	            }
+	        }
+	    }
+}
