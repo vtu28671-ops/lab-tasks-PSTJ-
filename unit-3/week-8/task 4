@@ -1,0 +1,72 @@
+import java.util.*;
+enum Color { RED, GREEN }
+abstract class Tree {
+    int v,d; Color c;
+    Tree(int v,Color c,int d){this.v=v;this.c=c;this.d=d;}
+    int getValue(){return v;}
+    Color getColor(){return c;}
+    int getDepth(){return d;}
+    abstract void accept(TreeVis x);
+}
+class TreeNode extends Tree {
+    ArrayList<Tree> ch=new ArrayList<>();
+    TreeNode(int v,Color c,int d){super(v,c,d);}
+    void accept(TreeVis x){
+        x.visitNode(this);
+        for(Tree t:ch)t.accept(x);
+    }
+}
+class TreeLeaf extends Tree {
+    TreeLeaf(int v,Color c,int d){super(v,c,d);}
+    void accept(TreeVis x){x.visitLeaf(this);}
+}
+abstract class TreeVis {
+    abstract int getResult();
+    abstract void visitNode(TreeNode n);
+    abstract void visitLeaf(TreeLeaf l);
+}
+class SumInLeavesVisitor extends TreeVis {
+    int s;
+    int getResult(){return s;}
+    void visitNode(TreeNode n){}
+    void visitLeaf(TreeLeaf l){s+=l.getValue();}
+}
+class ProductOfRedNodesVisitor extends TreeVis {
+    long p=1;
+    int getResult(){return (int)p;}
+    void visitNode(TreeNode n){if(n.getColor()==Color.RED)p=p*n.getValue()%1000000007;}
+    void visitLeaf(TreeLeaf l){if(l.getColor()==Color.RED)p=p*l.getValue()%1000000007;}
+}
+class FancyVisitor extends TreeVis {
+    int a,b;
+    int getResult(){return Math.abs(a-b);}
+    void visitNode(TreeNode n){if(n.getDepth()%2==0)a+=n.getValue();}
+    void visitLeaf(TreeLeaf l){if(l.getColor()==Color.GREEN)b+=l.getValue();}
+}
+public class Solution {
+    static int[] v; static Color[] c; static ArrayList<Integer>[] g;
+    static Tree build(int u,int p,int d){
+        if(u!=0&&g[u].size()==1)return new TreeLeaf(v[u],c[u],d);
+        TreeNode n=new TreeNode(v[u],c[u],d);
+        for(int x:g[u])if(x!=p)n.ch.add(build(x,u,d+1));
+        return n;
+    }
+    public static void main(String[] args){
+        Scanner s=new Scanner(System.in);
+        int n=s.nextInt();
+        v=new int[n]; c=new Color[n]; g=new ArrayList[n];
+        for(int i=0;i<n;i++)v[i]=s.nextInt();
+        for(int i=0;i<n;i++)c[i]=s.nextInt()==0?Color.RED:Color.GREEN;
+        for(int i=0;i<n;i++)g[i]=new ArrayList<>();
+        for(int i=0;i<n-1;i++){
+            int a=s.nextInt()-1,b=s.nextInt()-1;
+            g[a].add(b);g[b].add(a);
+        }
+        Tree root=build(0,-1,0);
+        TreeVis x=new SumInLeavesVisitor(),y=new ProductOfRedNodesVisitor(),z=new FancyVisitor();
+        root.accept(x);root.accept(y);root.accept(z);
+        System.out.println(x.getResult());
+        System.out.println(y.getResult());
+        System.out.println(z.getResult());
+    }
+}
